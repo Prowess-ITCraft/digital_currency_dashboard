@@ -1104,3 +1104,26 @@ td {
             border-radius: 50%;
             animation: pulse 2s infinite;
         }
+
+        .modal-body ol {
+  list-style-type: decimal;
+  padding-left: 2.2rem;
+  margin: 1.2rem 0;
+}
+
+.modal-body ol > li {
+  margin-bottom: 1rem;
+  font-size: 1.05rem;
+  line-height: 1.6;
+}
+
+.modal-body ol ul {
+  margin-top: 0.6rem;
+  padding-left: 1.6rem;
+  list-style-type: lower-alpha;
+}
+
+.modal-body ol ul li {
+  margin-bottom: 0.4rem;
+  font-size: 1rem;
+}

@@ -208,6 +208,404 @@
 // }
 
 
+// async function populateTable() {
+//   const tbody = document.getElementById("audit-table");
+//   if (!tbody) {
+//     console.error("audit-table tbody not found");
+//     return;
+//   }
+
+//   tbody.innerHTML = ""; // Clear table
+
+//   const company = localStorage.getItem("company");
+//   if (!company) {
+//     console.warn("No company in localStorage");
+//     tbody.innerHTML = '<tr><td colspan="4" class="text-center text-danger">Please log in</td></tr>';
+//     return;
+//   }
+
+//   try {
+//     // Find client
+//     const clientsRef = collection(db, "clients");
+//     const clientQ = query(clientsRef, where("company", "==", company));
+//     const clientSnap = await getDocs(clientQ);
+
+//     if (clientSnap.empty) {
+//       console.warn("Client not found:", company);
+//       tbody.innerHTML = '<tr><td colspan="4" class="text-center text-danger">Client not found</td></tr>';
+//       return;
+//     }
+
+//     const clientDoc = clientSnap.docs[0];
+//     const clientId = clientDoc.id;
+
+//     // Get audits
+//     const auditsRef = collection(db, `clients/${clientId}/audits`);
+//     const auditsSnap = await getDocs(auditsRef);
+
+//     const auditMap = {};
+//     auditsSnap.forEach((doc) => {
+//       const data = doc.data();
+//       const key = `${data.year}-${data.month}`;
+//       auditMap[key] = data;
+//     });
+
+//     // Show all 12 months, active months affect balance
+//     const displayYear = 2026;
+//     const months = [
+//       "January", "February", "March", "April", "May", "June",
+//       "July", "August", "September", "October", "November", "December"
+//     ];
+//     const activeMonths = ["February", "March", "April"]; // only these deduct 6000 each
+
+//     let totalDeduction = 0;
+
+//     months.forEach((month) => {
+//       const key = `${displayYear}-${month}`;
+//       const audit = auditMap[key] || {
+//         audit1Status: "pending",
+//         audit1ClientName: "",
+//         audit2Status: "pending",
+//         audit2ClientName: "",
+//       };
+
+//       // === FIXED 6000 deduction per active month ===
+//       let monthDeduction = 0;
+//       if (activeMonths.includes(month)) {
+//         monthDeduction = 6000;
+//         totalDeduction += monthDeduction;
+//       }
+
+//       // Colors & names
+//       let a1Class = "red-text", a1Name = "";
+//       let a2Class = "red-text", a2Name = "";
+
+//       if (audit.audit1Status === "project_conversion") {
+//         a1Class = "green-text";
+//         a1Name = audit.audit1ClientName ? ` (${audit.audit1ClientName})` : "";
+//       } else if (audit.audit1Status === "initiated") {
+//         a1Class = "yellow-text";
+//       }
+
+//       if (audit.audit2Status === "project_conversion") {
+//         a2Class = "green-text";
+//         a2Name = audit.audit2ClientName ? ` (${audit.audit2ClientName})` : "";
+//       } else if (audit.audit2Status === "initiated") {
+//         a2Class = "yellow-text";
+//       }
+
+//       // STATUS: Lapsed if any pending, else Not Lapsed
+//       const hasPending = audit.audit1Status === "pending" || audit.audit2Status === "pending";
+//       const statusText = hasPending ? "Lapsed" : "Not Lapsed";
+//       const statusClass = hasPending ? "text-danger fw-bold" : "text-success fw-bold";
+
+//       const row = document.createElement("tr");
+
+//       // Gray out disabled months (Jan + May–Dec)
+//       if (!activeMonths.includes(month)) {
+//         row.classList.add("disabled-month");
+//       }
+
+//       row.innerHTML = `
+//         <td>${month}</td>
+//         <td class="${a1Class}">3000 DC${a1Name}</td>
+//         <td class="${a2Class}">3000 DC${a2Name}</td>
+//         <td class="${statusClass}">${statusText}</td>
+//       `;
+//       tbody.appendChild(row);
+//     });
+
+//     // 5. Update header balance (fixed 6000 per active month)
+//     const initialBalance = 60000;
+//     const currentBalance = initialBalance - totalDeduction;
+//     const balanceEl = document.getElementById("balance-amount");
+//     if (balanceEl) {
+//       balanceEl.textContent = currentBalance.toLocaleString() + " DC";
+//     }
+
+//   } catch (err) {
+//     console.error("populateTable error:", err);
+//     tbody.innerHTML = '<tr><td colspan="4" class="text-center text-danger">Error loading audit data</td></tr>';
+//   }
+// }
+
+// async function populateTable() {
+//   const tbody = document.getElementById("audit-table");
+//   if (!tbody) {
+//     console.error("audit-table tbody not found");
+//     return;
+//   }
+
+//   tbody.innerHTML = ""; // Clear table
+
+//   const company = localStorage.getItem("company");
+//   if (!company) {
+//     console.warn("No company in localStorage");
+//     tbody.innerHTML = '<tr><td colspan="4" class="text-center text-danger">Please log in</td></tr>';
+//     return;
+//   }
+
+//   try {
+//     // 1. Find client
+//     const clientsRef = collection(db, "clients");
+//     const clientQ = query(clientsRef, where("company", "==", company));
+//     const clientSnap = await getDocs(clientQ);
+
+//     if (clientSnap.empty) {
+//       console.warn("Client not found:", company);
+//       tbody.innerHTML = '<tr><td colspan="4" class="text-center text-danger">Client not found</td></tr>';
+//       return;
+//     }
+
+//     const clientDoc = clientSnap.docs[0];
+//     const clientId = clientDoc.id;
+
+//     // 2. Get audits
+//     const auditsRef = collection(db, `clients/${clientId}/audits`);
+//     const auditsSnap = await getDocs(auditsRef);
+
+//     const auditMap = {};
+//     auditsSnap.forEach((doc) => {
+//       const data = doc.data();
+//       const key = `${data.year}-${data.month}`;
+//       auditMap[key] = data;
+//     });
+
+//     // 3. Determine current month/year for auto-activation
+//     const now = new Date();
+//     const currentYear = now.getFullYear();
+//     const currentMonthName = now.toLocaleString('default', { month: 'long' });
+
+//     // Display year (your test data uses 2026)
+//     const displayYear = 2026;
+
+//     const months = [
+//       "January", "February", "March", "April", "May", "June",
+//       "July", "August", "September", "October", "November", "December"
+//     ];
+
+//     // Active months for balance deduction (you can expand later)
+//     const activeMonths = ["February", "March"];
+
+//     let totalDeduction = 0;
+
+//     months.forEach((month, index) => {
+//       const key = `${displayYear}-${month}`;
+//       const audit = auditMap[key] || {
+//         audit1Status: "pending",
+//         audit1ClientName: "",
+//         audit2Status: "pending",
+//         audit2ClientName: "",
+//       };
+
+//       // Determine if this is the CURRENT month (auto-activate)
+//       const isCurrentMonth = (displayYear === currentYear) && (month === currentMonthName);
+
+//       // Colors & names — only show real status for current month
+//       let a1Class = "red-text", a1Name = "";
+//       let a2Class = "red-text", a2Name = "";
+
+//       if (isCurrentMonth) {
+//         // Show real colors only for current month
+//         if (audit.audit1Status === "project_conversion" || audit.audit1Status === "completed_atp") {
+//           a1Class = "green-text";
+//           a1Name = audit.audit1ClientName ? ` (${audit.audit1ClientName})` : "";
+//         } else if (audit.audit1Status === "initiated") {
+//           a1Class = "yellow-text";
+//         }
+
+//         if (audit.audit2Status === "project_conversion" || audit.audit2Status === "completed_atp") {
+//           a2Class = "green-text";
+//           a2Name = audit.audit2ClientName ? ` (${audit.audit2ClientName})` : "";
+//         } else if (audit.audit2Status === "initiated") {
+//           a2Class = "yellow-text";
+//         }
+//       }
+
+//       // === FIXED 6000 deduction per active month ===
+//       let monthDeduction = 0;
+//       if (activeMonths.includes(month)) {
+//         monthDeduction = 6000;
+//         totalDeduction += monthDeduction;
+//       }
+
+//       // === STATUS column: completely empty for all months ===
+//       // (as per your latest request – no "Lapsed" or "Active" visible)
+//       const statusText = "";
+//       const statusClass = "";
+
+//       const row = document.createElement("tr");
+
+//       // Gray out all months EXCEPT the current month
+//       if (!isCurrentMonth) {
+//         row.classList.add("disabled-month");
+//       }
+
+//       row.innerHTML = `
+//         <td>${month}</td>
+//         <td class="${a1Class}">3000 DC${a1Name}</td>
+//         <td class="${a2Class}">3000 DC${a2Name}</td>
+//         <td class="${statusClass}">${statusText}</td>
+//       `;
+//       tbody.appendChild(row);
+//     });
+
+//     // 5. Update header balance (fixed 6000 per active month)
+//     const initialBalance = 60000;
+//     const currentBalance = initialBalance - totalDeduction;
+//     const balanceEl = document.getElementById("balance-amount");
+//     if (balanceEl) {
+//       balanceEl.textContent = currentBalance.toLocaleString() + " DC";
+//     }
+
+//   } catch (err) {
+//     console.error("populateTable error:", err);
+//     tbody.innerHTML = '<tr><td colspan="4" class="text-center text-danger">Error loading audit data</td></tr>';
+//   }
+// }
+
+// async function populateTable() {
+//   const tbody = document.getElementById("audit-table");
+//   if (!tbody) {
+//     console.error("audit-table tbody not found");
+//     return;
+//   }
+
+//   tbody.innerHTML = ""; // Clear table
+
+//   const company = localStorage.getItem("company");
+//   if (!company) {
+//     console.warn("No company in localStorage");
+//     tbody.innerHTML = '<tr><td colspan="4" class="text-center text-danger">Please log in</td></tr>';
+//     return;
+//   }
+
+//   try {
+//     // 1. Find client
+//     const clientsRef = collection(db, "clients");
+//     const clientQ = query(clientsRef, where("company", "==", company));
+//     const clientSnap = await getDocs(clientQ);
+
+//     if (clientSnap.empty) {
+//       console.warn("Client not found:", company);
+//       tbody.innerHTML = '<tr><td colspan="4" class="text-center text-danger">Client not found</td></tr>';
+//       return;
+//     }
+
+//     const clientDoc = clientSnap.docs[0];
+//     const clientId = clientDoc.id;
+
+//     // 2. Get audits
+//     const auditsRef = collection(db, `clients/${clientId}/audits`);
+//     const auditsSnap = await getDocs(auditsRef);
+
+//     const auditMap = {};
+//     auditsSnap.forEach((doc) => {
+//       const data = doc.data();
+//       const key = `${data.year}-${data.month}`;
+//       auditMap[key] = data;
+//     });
+
+//     // 3. Current date for determining past/current/future
+//     const now = new Date();
+//     const currentYear = now.getFullYear();
+//     const currentMonthIndex = now.getMonth(); // 0 = January, 1 = February, ..., 11 = December
+
+//     const displayYear = 2026; // your test year
+//     const months = [
+//       "January", "February", "March", "April", "May", "June",
+//       "July", "August", "September", "October", "November", "December"
+//     ];
+
+//     const activeMonthsForDeduction = ["February", "March"]; // only these deduct 6000
+
+//     let totalDeduction = 0;
+
+//     months.forEach((month, index) => {
+//       const key = `${displayYear}-${month}`;
+//       const audit = auditMap[key] || {
+//         audit1Status: "pending",
+//         audit1ClientName: "",
+//         audit2Status: "pending",
+//         audit2ClientName: "",
+//       };
+
+//       // Determine state of this month
+//       const isCurrentMonth = (displayYear === currentYear) && (index === currentMonthIndex);
+//       const isPastMonth    = (displayYear < currentYear) || (displayYear === currentYear && index < currentMonthIndex);
+
+//       // Colors & names — only show real status for CURRENT month
+//       let a1Class = "red-text", a1Name = "";
+//       let a2Class = "red-text", a2Name = "";
+
+//       if (isCurrentMonth) {
+//         if (audit.audit1Status === "project_conversion" || audit.audit1Status === "completed_atp") {
+//           a1Class = "green-text";
+//           a1Name = audit.audit1ClientName ? ` (${audit.audit1ClientName})` : "";
+//         } else if (audit.audit1Status === "initiated") {
+//           a1Class = "yellow-text";
+//         }
+
+//         if (audit.audit2Status === "project_conversion" || audit.audit2Status === "completed_atp") {
+//           a2Class = "green-text";
+//           a2Name = audit.audit2ClientName ? ` (${audit.audit2ClientName})` : "";
+//         } else if (audit.audit2Status === "initiated") {
+//           a2Class = "yellow-text";
+//         }
+//       }
+
+//       // === FIXED 6000 deduction per active month ===
+//       let monthDeduction = 0;
+//       if (activeMonthsForDeduction.includes(month)) {
+//         monthDeduction = 6000;
+//         totalDeduction += monthDeduction;
+//       }
+
+//       // === STATUS logic ===
+//       let statusText = "";
+//       let statusClass = "";
+
+//       if (isPastMonth) {
+//         // Past months keep status
+//         const hasPending = audit.audit1Status === "pending" || audit.audit2Status === "pending";
+//         statusText = hasPending ? "Lapsed" : "Not Lapsed";
+//         statusClass = hasPending ? "text-danger fw-bold" : "text-success fw-bold";
+//       } else {
+//         // Current & future months: completely empty
+//         statusText = "";
+//         statusClass = "";
+//       }
+
+//       const row = document.createElement("tr");
+
+//       // Gray out all months EXCEPT the current month
+//       if (!isCurrentMonth) {
+//         row.classList.add("disabled-month");
+//       }
+
+//       row.innerHTML = `
+//         <td>${month}</td>
+//         <td class="${a1Class}">3000 DC${a1Name}</td>
+//         <td class="${a2Class}">3000 DC${a2Name}</td>
+//         <td class="${statusClass}">${statusText}</td>
+//       `;
+//       tbody.appendChild(row);
+//     });
+
+//     // 5. Update header balance (fixed 6000 per active month)
+//     const initialBalance = 60000;
+//     const currentBalance = initialBalance - totalDeduction;
+//     const balanceEl = document.getElementById("balance-amount");
+//     if (balanceEl) {
+//       balanceEl.textContent = currentBalance.toLocaleString() + " DC";
+//     }
+
+//   } catch (err) {
+//     console.error("populateTable error:", err);
+//     tbody.innerHTML = '<tr><td colspan="4" class="text-center text-danger">Error loading audit data</td></tr>';
+//   }
+// }
+
 async function populateTable() {
   const tbody = document.getElementById("audit-table");
   if (!tbody) {
@@ -225,7 +623,7 @@ async function populateTable() {
   }
 
   try {
-    // Find client
+    // 1. Find client
     const clientsRef = collection(db, "clients");
     const clientQ = query(clientsRef, where("company", "==", company));
     const clientSnap = await getDocs(clientQ);
@@ -239,7 +637,7 @@ async function populateTable() {
     const clientDoc = clientSnap.docs[0];
     const clientId = clientDoc.id;
 
-    // Get audits
+    // 2. Get audits
     const auditsRef = collection(db, `clients/${clientId}/audits`);
     const auditsSnap = await getDocs(auditsRef);
 
@@ -250,17 +648,21 @@ async function populateTable() {
       auditMap[key] = data;
     });
 
-    // Show all 12 months, active months affect balance
-    const displayYear = 2026;
+    // 3. Current date
+    const now = new Date();
+    const currentYear = now.getFullYear();
+    const currentMonthName = now.toLocaleString('default', { month: 'long' });
+
+    const displayYear = 2026; // your test year
     const months = [
       "January", "February", "March", "April", "May", "June",
       "July", "August", "September", "October", "November", "December"
     ];
-    const activeMonths = ["February", "March", "April"]; // only these deduct 6000 each
 
-    let totalDeduction = 0;
+    let totalUtilized = 0;
+    let totalLapsed = 0;
 
-    months.forEach((month) => {
+    months.forEach((month, index) => {
       const key = `${displayYear}-${month}`;
       const audit = auditMap[key] || {
         audit1Status: "pending",
@@ -269,40 +671,85 @@ async function populateTable() {
         audit2ClientName: "",
       };
 
-      // === FIXED 6000 deduction per active month ===
-      let monthDeduction = 0;
-      if (activeMonths.includes(month)) {
-        monthDeduction = 6000;
-        totalDeduction += monthDeduction;
-      }
+      // Month state
+      const isPastMonth    = (displayYear < currentYear) ||
+                             (displayYear === currentYear && index < months.indexOf(currentMonthName));
+      const isCurrentMonth = (displayYear === currentYear) && (month === currentMonthName);
+      const isFutureMonth  = (displayYear > currentYear) ||
+                             (displayYear === currentYear && index > months.indexOf(currentMonthName));
 
-      // Colors & names
+      // Special rule: January is always disabled (program started in Feb)
+      const isJanuaryDisabled = month === "January";
+
+      // Active if past or current, but exclude January
+      const isActiveMonth = (isPastMonth || isCurrentMonth) && !isJanuaryDisabled;
+
+      // === COLORS (red = pending, yellow = audit_completed, green = project-conversion) ===
       let a1Class = "red-text", a1Name = "";
       let a2Class = "red-text", a2Name = "";
 
-      if (audit.audit1Status === "project_conversion") {
-        a1Class = "green-text";
-        a1Name = audit.audit1ClientName ? ` (${audit.audit1ClientName})` : "";
-      } else if (audit.audit1Status === "initiated") {
-        a1Class = "yellow-text";
+      if (isActiveMonth) {
+        // Audit1
+        if (audit.audit1Status === "project-conversion") {
+          a1Class = "green-text";
+          a1Name = audit.audit1ClientName ? ` (${audit.audit1ClientName})` : "";
+        } else if (audit.audit1Status === "audit_completed") {
+          a1Class = "yellow-text";
+        } else {
+          a1Class = "red-text";
+        }
+
+        // Audit2
+        if (audit.audit2Status === "project-conversion") {
+          a2Class = "green-text";
+          a2Name = audit.audit2ClientName ? ` (${audit.audit2ClientName})` : "";
+        } else if (audit.audit2Status === "audit_completed") {
+          a2Class = "yellow-text";
+        } else {
+          a2Class = "red-text";
+        }
       }
 
-      if (audit.audit2Status === "project_conversion") {
-        a2Class = "green-text";
-        a2Name = audit.audit2ClientName ? ` (${audit.audit2ClientName})` : "";
-      } else if (audit.audit2Status === "initiated") {
-        a2Class = "yellow-text";
+      // === UTILIZED during month (3,000 per completed audit) ===
+      let monthUtilized = 0;
+      if (isActiveMonth) {
+        if (audit.audit1Status === "audit_completed" || audit.audit1Status === "project-conversion") {
+          monthUtilized += 3000;
+        }
+        if (audit.audit2Status === "audit_completed" || audit.audit2Status === "project-conversion") {
+          monthUtilized += 3000;
+        }
+        totalUtilized += monthUtilized;
       }
 
-      // STATUS: Lapsed if any pending, else Not Lapsed
-      const hasPending = audit.audit1Status === "pending" || audit.audit2Status === "pending";
-      const statusText = hasPending ? "Lapsed" : "Not Lapsed";
-      const statusClass = hasPending ? "text-danger fw-bold" : "text-success fw-bold";
+      // === LAPSED only at month-end (for past months, excluding January) ===
+      let monthLapsed = 0;
+      if (isPastMonth && !isJanuaryDisabled) {
+        const completedAudits = 
+          (audit.audit1Status === "audit_completed" || audit.audit1Status === "project-conversion" ? 1 : 0) +
+          (audit.audit2Status === "audit_completed" || audit.audit2Status === "project-conversion" ? 1 : 0);
+
+        monthLapsed = (2 - completedAudits) * 3000; // 3000 per missing audit
+        totalLapsed += monthLapsed;
+      }
+
+      // === STATUS logic ===
+      let statusText = "";
+      let statusClass = "";
+
+      if (isPastMonth && !isJanuaryDisabled) {
+        const hasPending = audit.audit1Status === "pending" || audit.audit2Status === "pending";
+        statusText = hasPending ? "Lapsed" : "Not Lapsed";
+        statusClass = hasPending ? "text-danger fw-bold" : "text-success fw-bold";
+      } else {
+        statusText = "";
+        statusClass = "";
+      }
 
       const row = document.createElement("tr");
 
-      // Gray out disabled months (Jan + May–Dec)
-      if (!activeMonths.includes(month)) {
+      // Gray out future months + January
+      if (isFutureMonth || isJanuaryDisabled) {
         row.classList.add("disabled-month");
       }
 
@@ -315,9 +762,9 @@ async function populateTable() {
       tbody.appendChild(row);
     });
 
-    // 5. Update header balance (fixed 6000 per active month)
+    // 6. Final balance = initial - (utilized + lapsed)
     const initialBalance = 60000;
-    const currentBalance = initialBalance - totalDeduction;
+    const currentBalance = initialBalance - totalUtilized - totalLapsed;
     const balanceEl = document.getElementById("balance-amount");
     if (balanceEl) {
       balanceEl.textContent = currentBalance.toLocaleString() + " DC";
