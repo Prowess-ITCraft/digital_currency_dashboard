@@ -5,44 +5,48 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>DC Dashboard</title>
     
-    <!-- Bootstrap 4.6 + Font Awesome -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
-    
-    <!-- Custom CSS -->
     <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
 
 <!-- ====================== LOGIN PAGE ====================== -->
-
 <div class="auth-wrapper" id="login-section">
-        <div id="login-section" class="login-container">
-            <div class=" auth-form-box login-form-box ">
-                
-                <form id="login-form">
-                    <!-- <h1>Sign In</h1> -->
-                    <div class="form-header text-center mb-2">
-                        <h2 class="welcome-title">Welcome</h2>
-                        <p class="welcome-subtitle">Login to your account</p>
-                    </div>
-                    <div class="form-group position-relative mb-4">
-                        <i class="fas fa-envelope me-2 text-muted"></i>
-                        <label for="email" class="form-label align-items-center">Email ID</label>
-                        <input type="email" id="email" class="form-control ps-5" placeholder="Enter your email" required>
-                    </div>
-                    <div class="form-group position-relative mb-4">
-                        <i class="fas fa-lock me-2 text-muted"></i>
-                        <label for="password" class="form-label align-items-center">Password</label>
-                        <input type="password" id="password" class="form-control ps-5 pe-5" value="pass123" placeholder="Enter your password" required>
+    <div class="login-container">
+        <!-- Mobile logo banner: only visible on small screens via CSS -->
+        <div class="mobile-logo-banner">
+            <img src="images/logo.png" alt="ITCraft Logo">
+            <span>Secure Access to Your Digital Currency Dashboard</span>
+        </div>
+
+        <div class="auth-form-box login-form-box">
+            <form id="login-form">
+                <div class="form-header text-center mb-4">
+                    <h2 class="welcome-title">Welcome</h2>
+                    <p class="welcome-subtitle">Login to your account</p>
+                </div>
+                <div class="form-group position-relative mb-4">
+                    <label for="email" class="form-label">
+                        <i class="fas fa-envelope me-2"></i> Email ID
+                    </label>
+                    <input type="email" id="email" class="form-control" placeholder="Enter your email" required>
+                </div>
+                <div class="form-group position-relative mb-4">
+                    <label for="password" class="form-label">
+                        <i class="fas fa-lock me-2"></i> Password
+                    </label>
+                    <div class="password-wrapper">
+                        <input type="password" id="password" class="form-control" value="pass123" placeholder="Enter your password" required>
                         <i class="fas fa-eye toggle-password" id="togglePassword"></i>
                     </div>
-                    <button type="button" id="loginBtn" class="btn btn-block" style="font-weight: bold; width: 100%; color: white;">LogIn</button>
-                </form>
-                <div id="login-message" class="text-center mt-3 text-danger" style="display:none;"></div>
-            </div>
+                </div>
+                <button type="button" id="loginBtn" class="btn btn-login btn-block">Log In</button>
+            </form>
+            <div id="login-message" class="text-center mt-3 text-danger" style="display:none;"></div>
         </div>
+
         <div class="slide-panel-wrapper">
             <div class="slide-panel">
                 <div class="panel-content panel-content-right">
@@ -51,221 +55,151 @@
                 </div>
             </div>
         </div>
-</div>
-<!-- <div id="login-section" class="login-container">
-    <div class="login-card">
-        <img src="images/Logo.png" alt="logo">
-        <form id="login-form">
-            <div class="form-group">
-                <label for="email">Email</label>
-                <input type="email" id="email" class="form-control" placeholder="your@email.com" required>
-            </div>
-            <div class="form-group">
-                <label for="password">Password</label>
-                <input type="password" id="password" class="form-control" value="pass123" required>
-            </div>
-            <button type="button" onclick="handleLogin()" class="btn btn-primary btn-block">Login</button>
-        </form>
-        <div id="login-message" class="text-center mt-3 text-danger" style="display:none;"></div>
     </div>
-</div> -->
+</div>
 
 
 <!-- ====================== DASHBOARD ====================== -->
 <div id="dashboard-section" class="d-none">
-     <!-- <header class="header">
-        <h4 class="company-name" id="company-name">Company Name</h4>
-        
-        <div class="right-section">
-            <div class="balance">
-                <i class="fas fa-coins"></i>                  
-                <span id="balance-amount">60,000 DC</span>
-            </div>
-            
-            <div class="dropdown">
-                <button class="btn btn-light dropdown-toggle profile-btn" type="button" id="profileDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                    <i class="fas fa-user-circle"></i>
-                </button>
-                <div class="dropdown-menu dropdown-menu-right" aria-labelledby="profileDropdown">
-                    <a class="dropdown-item" href="#" data-toggle="modal" data-target="#termsModal">
-                        <i class="fas fa-file-contract mr-2"></i> Terms & Conditions
-                    </a>
-                    <div class="dropdown-divider"></div>
-                    <a class="dropdown-item text-danger" href="#" id="logoutBtn">
-                        <i class="fas fa-sign-out-alt mr-2"></i> Logout
-                    </a>
-                </div>
-            </div>
-        </div>
-    </header> -->
 
     <header class="modern-dashboard-header">
-    <div class="header-inner">
-        <!-- Left: Company Name -->
-        <div class="brand-area">
-            <h2 class="company-title" id="company-name">Company Name</h2>
-        </div>
-
-        <!-- Center: Logo  -->
-        <!-- <div class="header-logo-container">
-            <img src="images/logo.png" alt="ITCraft Logo" class="header-logo">
-        </div> -->
-
-        <!-- Right: Balance + Profile -->
-        <div class="header-actions">
-            <!-- Balance Display -->
-            <div class="balance-badge">
-                <div class="coin-glow">
-                    <i class="fas fa-coins"></i>
-                </div>
-                <span class="balance-text" id="balance-amount">60,000 DC</span>
+        <div class="header-inner">
+            <div class="brand-area">
+                <h2 class="company-title" id="company-name">Company Name</h2>
             </div>
 
-            <!-- Profile Dropdown -->
-            <div class="profile-wrapper">
-                <button class="profile-trigger" id="profileDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                    <div class="avatar-circle">
-                        <i class="fas fa-user-circle"></i>
+            <div class="header-actions">
+                <div class="balance-badge">
+                    <div class="coin-glow">
+                        <i class="fas fa-coins"></i>
                     </div>
-                    <span class="profile-label">Profile</span>
-                    <i class="fas fa-chevron-down chevron"></i>
-                </button>
+                    <span class="balance-text" id="balance-amount">60,000 DC</span>
+                </div>
 
-                <div class="dropdown-menu profile-menu" aria-labelledby="profileDropdown">
-                    <!-- <div class="dropdown-header">
-                        <strong>Welcome</strong>
-                        <small>Manage your dashboard</small>
-                    </div> -->
-                    <div class="dropdown-divider"></div>
-                    <a class="dropdown-item" href="#" data-toggle="modal" data-target="#termsModal">
-                        <i class="fas fa-file-contract icon"></i>
-                        Terms & Conditions
-                    </a>
-                    <a class="dropdown-item logout-item" href="#" id="logoutBtn">
-                        <i class="fas fa-sign-out-alt icon"></i>
-                        Logout
-                    </a>
+                <div class="profile-wrapper">
+                    <button class="profile-trigger" id="profileDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        <div class="avatar-circle">
+                            <i class="fas fa-user-circle"></i>
+                        </div>
+                        <span class="profile-label">Profile</span>
+                        <i class="fas fa-chevron-down chevron"></i>
+                    </button>
+
+                    <div class="dropdown-menu profile-menu" aria-labelledby="profileDropdown">
+                        <div class="dropdown-divider"></div>
+                        <a class="dropdown-item" href="#" data-toggle="modal" data-target="#termsModal">
+                            <i class="fas fa-file-contract icon"></i>
+                            Terms &amp; Conditions
+                        </a>
+                        <a class="dropdown-item logout-item" href="#" id="logoutBtn">
+                            <i class="fas fa-sign-out-alt icon"></i>
+                            Logout
+                        </a>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
     </header>
 
     <div id="table-loading" class="text-center my-5" style="display: none;">
         <div class="spinner-border text-primary" role="status">
-            <span class="visually-hidden">Loading audits...</span>
+            <span class="sr-only">Loading audits...</span>
         </div>
         <p class="mt-2">Loading your audit data...</p>
     </div>
 
-<div id="table-error" class="alert alert-danger my-5" style="display: none;">
-  Error loading audit data. Please try refreshing.
-</div>
-    <!-- Main Content -->
+    <div id="table-error" class="alert alert-danger my-5 mx-3" style="display: none;">
+        Error loading audit data. Please try refreshing.
+    </div>
+
     <div class="dashboard-content">
         <div class="main-layout">
-            <!-- Left: Table -->
             <div class="table-card">
-                <table class="table table-hover">
-                    <thead>
-                        <tr>
-                            <th>Months</th>
-                            <th>Audit-1</th>
-                            <th>Audit-2</th>
-                            <th>Status</th>
-                        </tr>
-                    </thead>
-                    <tbody id="audit-table">
-                        <!-- Filled by JavaScript -->
-                    </tbody>
-                </table>
+                <div class="table-responsive">
+                    <table class="table table-hover mb-0">
+                        <thead>
+                            <tr>
+                                <th>Months</th>
+                                <th>Audit-1</th>
+                                <th>Audit-2</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody id="audit-table">
+                            <!-- Filled by JavaScript -->
+                        </tbody>
+                    </table>
+                </div>
             </div>
 
-            
-            <!-- Right: Coin Image Section -->
-            <div class="coin-section ">
-                <!-- <div class="coin-background"></div> -->
+            <div class="coin-section">
                 <img src="images/coin.png" alt="ProWess Secured Digital Asset" class="coin-stack">
             </div>
         </div>
-
-        <!-- Optional Terms & Conditions (uncomment if needed) -->
-        <!--
-        <div class="terms-box mt-5">
-            <h5>Terms & Conditions</h5>
-            <textarea class="form-control" rows="5" placeholder="Enter or display terms here..."></textarea>
-        </div>
-        -->
     </div>
 </div>
 
 <!-- Terms Modal -->
 <div class="modal fade" id="termsModal" tabindex="-1" role="dialog" aria-labelledby="termsModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-dialog modal-lg modal-dialog-scrollable" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="termsModalLabel">ITCraft Partner Program - Terms and Conditions</h5>
+                <h5 class="modal-title" id="termsModalLabel">Terms and Conditions</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <!-- <span aria-hidden="true">&times;</span> -->
+                    <span aria-hidden="true">&times;</span>
                 </button>
             </div>
-            <!-- <div class="modal-body">
-                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua...</p>
-            </div> -->
-            
 
             <div class="modal-body">
+                <ol class="terms-list">
+                    <li>
+                        On joining the Partner Program: A welcome activation bonus of <strong>60,000 Digital Coins</strong> (hereinafter referred to as <strong>DCs</strong>) credited to the AP's ITCraft wallet.
+                    </li>
+                    <li>
+                        Each AP will get their login-based account dashboard showing their DCs &amp; the activation status.
+                    </li>
+                    <li>
+                        AP is expected to redeem at least <strong>6,000 DCs in a month</strong>, else they would lapse on the first day of the next month.
+                    </li>
+                    <li>
+                        <strong><u>DC Usage:</u></strong>
+                        <ul>
+                            <li>Against on-boarding every SME for PrismSuite Audit → <strong>3,000 DCs</strong> are redeemed (only against audit completion).</li>
+                            <li>Against 2 audits in the month → <strong>6,000 DCs</strong> are redeemed &amp; deducted from the ITCraft wallet.</li>
+                            <li>If not redeemed → 6,000 DCs allocated for that month would <strong>lapse</strong> &amp; hence deducted from the ITCraft wallet.</li>
+                            <li>If AP on-boards only one SME for PrismSuite audit in that month → 3,000 DCs redeemed and balance 3,000 DCs get lapsed, effectively deducting <strong>6,000 DCs</strong> from the wallet.</li>
+                            <li>6,000 DCs every month will be deducted from the wallet by the first day of next month — if AP uses them for 2 audits: 6,000 DCs are redeemed; against one audit: 3,000 DCs redeemed &amp; 3,000 DCs lapsed; if not used: all 6,000 DCs would lapse.</li>
+                            <li>APs using more than 2 audits a month would redeem more DCs accordingly (<strong>3,000 DC per audit</strong>).</li>
+                        </ul>
+                    </li>
+                    <li>
+                        <strong><u>ATP Status Unlock:</u></strong> First 10 APs who fully redeem all <strong>60,000 DCs within 12 months</strong> or sooner would automatically earn the agreement to be an <strong>'Exclusive ATP'</strong>, for yearly recurring earnings.
+                    </li>
+                    <li>
+                        <strong><u>Earnings:</u></strong>
+                        <ul>
+                            <li>Against redeemed 3,000 DCs per audit; AP earns <strong>₹3,000/-</strong> after completion of one month of the audit.</li>
+                            <li>If the SME (end customer) decides to go with IT restructuring commercials in that month, AP would get <strong>8.6% of the project value</strong>.</li>
+                            <li>One-month gap for SME, post audit report submission is for them to take action. If they take action in that month, AP qualifies for <strong>8.6% of the revenue</strong>.</li>
+                            <li>If SME takes action after a month but within 6 months, the AP would still get <strong>8.6% of the project revenue</strong> after deducting ₹3,000/- which has already been paid to them.</li>
+                            <li>Either way, AP tends to earn for their efforts — either <strong>8.6% of the project value</strong> or <strong>₹3,000/-</strong>.</li>
+                            <li>₹3,000/- would be credited into the AP's account after a month and in the AP's login dashboard it will show 3,000 DCs redeemed.</li>
+                            <li>If the SME decides to go ahead with the project, post completion &amp; receipt of payments from the SME, AP's account will be credited with <strong>8.6% of the project value</strong>.</li>
+                        </ul>
+                    </li>
+                    <li>
+                        <strong><u>Milestone Bonus:</u></strong> Complete <strong>5 audits before 31 March 2026</strong> → a total of <strong>₹20,000</strong> (instead of ₹15,000) will be credited into AP's account, only if none of the SMEs move ahead with a project.
+                    </li>
+                    <li>
+                        <strong><u>Payout Timing:</u></strong> All pay-outs (assured amounts, project revenue share or bonus) are processed <strong>1 month after audit or project completion</strong>.
+                    </li>
+                    <li>
+                        <strong>Program Goal</strong> is to assist AP to monetize their network &amp; get credited for every effort, however least it could be. Get immediate assured income from audits + long-term bigger project revenue share from project conversions + upgrade to ATP status with YOY income.<br>
+                        <strong>Valid till 31 March 2026.</strong>
+                    </li>
+                </ol>
+            </div>
 
-    <ol style="line-height: 1.8; padding-left: 2.2rem; margin: 1.2rem 0; font-size: 1.05rem;">
-        <li><strong>Joining the Program</strong><br>
-            On activation, you receive <strong>60,000 Digital Coins (DC)</strong> credited to your ITCraft wallet.
-        </li>
-
-        <li><strong>DC Usage</strong><br>
-            For every successful completion of a PrismSuite Audit → <strong>3,000 DC</strong> are deducted (only after successful audit completion).
-        </li>
-
-        <li><strong>Penalty for Low Activity</strong><br>
-            If fewer than 2 audits (or zero) are completed in a month → <strong>6,000 DC lapse</strong> from your balance.
-        </li>
-
-        <li><strong>Monthly Activity Requirement</strong><br>
-            Minimum <strong>2 audits per month</strong> are expected to avoid penalties.
-        </li>
-
-        <li><strong>ATP Status Unlock</strong><br>
-            If you fully utilize all 60,000 DC within 12 months (or sooner) → You qualify for exclusive <strong>ATP status</strong>, which includes yearly recurring earnings and deeper participation in our growth ecosystem.
-        </li>
-
-        <li><strong>Basic Earning per Audit</strong><br>
-            Every completed audit provides an assured payout of <strong>₹3,000</strong>.
-        </li>
-
-        <li><strong>Earning when Audit Converts to Project</strong><br>
-            <ul style="margin-top: 0.5rem; padding-left: 1.6rem; list-style-type: lower-alpha;">
-                <li>If converted immediately → <strong>8.6%</strong> of project value (instead of ₹3,000).</li>
-                <li>If converted after a few months → <strong>8.6%</strong> of project value <strong>minus</strong> the ₹3,000 already paid.</li>
-            </ul>
-        </li>
-
-        <li><strong>Milestone Bonus</strong><br>
-            Complete <strong>5 audits before 31 March 2026</strong> → Receive <strong>₹20,000 Milestone Bonus</strong>.
-        </li>
-
-        <li><strong>Payout Timing</strong><br>
-            All payouts (assured amounts, commissions, bonuses) are processed <strong>1 month after audit completion</strong> (or project finalization).
-        </li>
-
-        <li><strong>Program Goal</strong><br>
-            Designed for active partners: immediate assured income from audits + long-term bigger commissions from project conversions + upgrade to ATP status with consistent effort.<br>
-            <strong>Valid till 31 March 2026</strong>.
-        </li>
-    </ol>
-
-    <!-- <p style="margin-top: 1.8rem; font-size: 0.95rem; color: #555; text-align: center;">
-        These terms may be updated from time to time. Continued participation constitutes acceptance of any changes.
-    </p> -->
-</div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
             </div>
@@ -273,7 +207,6 @@
     </div>
 </div>
 
-<!-- Scripts -->
 <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
 <script type="module" src="script.js"></script>
