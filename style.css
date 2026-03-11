@@ -495,21 +495,21 @@ tr:last-child td {
 /* Status Colors */
 .red-text {
     color: #ef4444 !important;
-    font-weight: 600;
+    font-weight: 700;
 }
 
 .yellow-text {
-    color: #f8f80e !important;
-    font-weight: 600;
+    color: #e6b800 !important;
+    font-weight: 700;
 }
 
 .green-text {
     color: #10b981 !important;
-    font-weight: 600;
+    font-weight: 700;
 }
 
 .green-text span {
-    font-weight: 500;
+    font-weight: 700;
     color: #065f46;
     margin-left: 4px;
 }
@@ -834,4 +834,86 @@ tr:last-child td {
     .profile-trigger:hover {
         transform: none;
     }
+}
+/* ============================================
+   BONUS AUDIT COLUMN
+   ============================================ */
+
+.bonus-audit-th {
+    background: #fffbeb;
+    color: #854d0e !important;
+    border-left: 2px solid #fde68a;
+    white-space: nowrap;
+}
+
+.bonus-audit-cell {
+    border-left: 2px solid #fde68a;
+    vertical-align: middle;
+    min-width: 130px;
+}
+
+.empty-bonus-dash {
+    color: #cbd5e1;
+    font-weight: 400;
+    font-size: 1rem;
+}
+
+.bonus-count-badge {
+    display: inline-block;
+    background: linear-gradient(135deg, #fbbf24, #f59e0b);
+    color: #fff;
+    font-size: 0.75rem;
+    font-weight: 700;
+    padding: 0.2rem 0.65rem;
+    border-radius: 20px;
+    letter-spacing: 0.3px;
+    margin-bottom: 0.35rem;
+    box-shadow: 0 2px 6px rgba(245, 158, 11, 0.38);
+}
+
+.bonus-audit-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.22rem;
+    margin-top: 0.2rem;
+}
+
+.bonus-audit-entry {
+    font-size: 0.875rem;
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+.bonus-completed-text {
+    color: #e6b800;
+    font-weight: 600;
+}
+
+/* .month-bonus-star {
+    display: inline-block;
+    color: #f59e0b;
+    font-size: 0.85rem;
+    margin-left: 5px;
+    text-shadow: 0 1px 4px rgba(245, 158, 11, 0.5);
+    vertical-align: middle;
+    animation: starPulse 2.5s ease-in-out infinite;
+} */
+
+/* @keyframes starPulse {
+    0%, 100% { opacity: 1;   transform: scale(1); }
+    50%       { opacity: 0.7; transform: scale(1.2); }
+} */
+
+#audit-table td:not(:first-child) {
+    font-weight: 600;
+}
+
+.disabled-month .bonus-audit-cell {
+    color: #94a3b8 !important;
+}
+
+@media (max-width: 768px) {
+    .bonus-audit-cell { min-width: 100px; }
+    .bonus-count-badge { font-size: 0.7rem; padding: 0.15rem 0.5rem; }
+    .bonus-audit-entry { font-size: 0.8rem; }
 }

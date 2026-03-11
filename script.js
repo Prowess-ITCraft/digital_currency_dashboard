@@ -1,756 +1,244 @@
 // script.js
 
-// const users = [
-//     { email: "hr@itsyinfotech.com", company: "Itsy Infotech" },
-//     { email: "siby.philip@waywedesign.com", company: "Waywe design Pvt Ltd" },
-//     { email: "ctisind@gmail.com", company: "CTIS&Fortrust Group" },
-//     { email: "jaluka@dpcmakeseasy.com", company: "Decision Point Consultancy" },
-//     { email: "jalukanandan@gmail.com", company: "Decision Point Consultancy" },
-//     { email: "ankur@utkarshinisoftware.com", company: "Utkarshini Software" },
-//     { email: "mahesh.k@orchidglobalit.tech", company: "Orchid Technologies and Consulting Services" },
-//     { email: "sachin.jain@naminathinfotech.shop", company: "Naminath Infotech LLP" },
-//     { email: "jishnulaxman@gmail.com", company: "WhitePapers" },
-//     { email: "agency@whitepaper.ae", company: "WhitePapers" },
-//     { email: "jyoti@chrysalisconsulting.co.in", company: "Chrysalis Consulting" },
-//     { email: "shahbhumit@18studiioz.com", company: "18 Sudios" },
-//     { email: "surya@ssisindia.com", company: "S&S InfoTech Software Pvt Ltd" },
-//     { email: "minalmg@gmail.com", company: "MASNX Global OPC Pvt Ltd" },
-//     { email: "minalmg.x@gmail.com", company: "MASNX Global OPC Pvt Ltd" },
-//     { email: "infotrend.technologies@gmail.com", company: "Infotrend Technologies" },
-//     { email: "r.sadhana6@outlook.com", company: "Maintec Technologies Pvt. Ltd." },
-//     { email: "sharanya.eshwaran@pentadacademy.com", company: "Pentad Education" },
-//     { email: "prathmesh@pinsoftek.com", company: "Pinsoftek" },
-//     { email: "bnsinghco3@gmail.com", company: "B N Singh & Co." },
-//     { email: "amar.kalvikatte@gmail.com", company: "Employeed (Avande) / Public speaker" },
-//     { email: "shruti@itcraft.net.in", company: "ITCraft" }
-// ];
-
-  // Import the functions you need from the SDKs you need
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-app.js";
-    import { getFirestore, collection, query, where, getDocs } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-firestore.js";
-  // TODO: Add SDKs for Firebase products that you want to use
-  // https://firebase.google.com/docs/web/setup#available-libraries
-
-  // Your web app's Firebase configuration
-  // For Firebase JS SDK v7.20.0 and later, measurementId is optional
-  const firebaseConfig = {
-    apiKey: "AIzaSyDKaa99EeFbXPP4YxPZMPqTuqjMQyFsMio",
-    authDomain: "partner-dashboard-83433.firebaseapp.com",
-    projectId: "partner-dashboard-83433",
-    storageBucket: "partner-dashboard-83433.firebasestorage.app",
-    messagingSenderId: "998003403808",
-    appId: "1:998003403808:web:c59c6b584b0a3a9568a045",
-    measurementId: "G-5Z0BPGB8JD"
-  };
-
-  // Initialize Firebase
-  const app = initializeApp(firebaseConfig);
-//   const analytics = getAnalytics(app);
-
-  // Initialize Firestore
-  const db = getFirestore(app);
-
-  // Make db globally available (so other functions can use it)
-  window.db = db;
-
-  console.log("Firebase & Firestore initialized successfully!");
-
-
-
-// const API_URL = "https://script.google.com/macros/s/AKfycbw01RY9CSfv-L7qH5XWCA9QY4EgFZtIqbbvT02zu80m0KWWO2S5YDiyDmEyQhsiBlDgvQ/exec";  
-// // ↑↑↑ Replace with your actual /exec URL from step 2 above
-
-// const months = ["January","February","March","April","May","June","July","August","September","October","November","December"];
-
-// function populateTable() {
-//   const tbody = document.getElementById("audit-table");
-//   tbody.innerHTML = "";
-  
-//   months.forEach(month => {
-//     const row = document.createElement("tr");
-//     row.innerHTML = `
-//       <td>${month}</td>
-//       <td class="red-text">3000 DC</td>
-//       <td class="red-text">3000 DC</td>
-//       <td></td>
-//     `;
-//     tbody.appendChild(row);
-//   });
-// }
-
-// async function populateTable() {
-//   const tbody = document.getElementById("audit-table");
-//   if (!tbody) {
-//     console.error("audit-table tbody not found");
-//     return;
-//   }
-
-//   tbody.innerHTML = ""; // Clear table
-
-//   const company = localStorage.getItem("company");
-//   if (!company) {
-//     console.warn("No company in localStorage");
-//     tbody.innerHTML = '<tr><td colspan="4" class="text-center text-danger">Please log in</td></tr>';
-//     return;
-//   }
-
-//   try {
-//     // Find client
-//     const clientsRef = collection(db, "clients");
-//     const clientQ = query(clientsRef, where("company", "==", company));
-//     const clientSnap = await getDocs(clientQ);
-
-//     if (clientSnap.empty) {
-//       console.warn("Client not found:", company);
-//       tbody.innerHTML = '<tr><td colspan="4" class="text-center text-danger">Client not found</td></tr>';
-//       return;
-//     }
-
-//     const clientDoc = clientSnap.docs[0];
-//     const clientId = clientDoc.id;
-
-//     // Get audits
-//     const auditsRef = collection(db, `clients/${clientId}/audits`);
-//     const auditsSnap = await getDocs(auditsRef);
-
-//     const auditMap = {};
-//     auditsSnap.forEach((doc) => {
-//       const data = doc.data();
-//       const key = `${data.year}-${data.month}`;
-//       auditMap[key] = data;
-//     });
-
-//     // Define months to show (all 12)
-//     const displayYear = 2026; // your test year
-//     const months = [
-//       "January", "February", "March", "April", "May", "June",
-//       "July", "August", "September", "October", "November", "December"
-//     ];
-
-//     // Months that contribute to balance (only Feb and March)
-//     const activeMonths = ["February", "March"];
-
-//     let totalLapsed = 0;
-
-//     months.forEach((month) => {
-//       const key = `${displayYear}-${month}`;
-//       const audit = auditMap[key] || {
-//         audit1Status: "pending",
-//         audit1ClientName: "",
-//         audit2Status: "pending",
-//         audit2ClientName: "",
-//         lapsedDC: 6000
-//       };
-
-//       // Colors & names (always show real status or default pending)
-//       let a1Class = "red-text", a1Text = "3000 DC", a1Name = "";
-//       let a2Class = "red-text", a2Text = "3000 DC", a2Name = "";
-
-//       if (audit.audit1Status === "project_conversion") {
-//         a1Class = "green-text";
-//         a1Name = audit.audit1ClientName ? ` (${audit.audit1ClientName})` : "";
-//       } else if (audit.audit1Status === "initiated") {
-//         a1Class = "yellow-text";
-//       }
-
-//       if (audit.audit2Status === "project_conversion") {
-//         a2Class = "green-text";
-//         a2Name = audit.audit2ClientName ? ` (${audit.audit2ClientName})` : "";
-//       } else if (audit.audit2Status === "initiated") {
-//         a2Class = "yellow-text";
-//       }
-
-//       // Only count lapsed from active months (Feb & March)
-//       let monthLapsed = 0;
-//       if (activeMonths.includes(month)) {
-//         monthLapsed = audit.lapsedDC || 0;
-//         totalLapsed += monthLapsed;
-//       }
-
-//       const row = document.createElement("tr");
-
-//       // Optional: gray out disabled months for visual distinction
-//       if (!activeMonths.includes(month)) {
-//         row.style.opacity = "0.6";
-//         row.style.background = "#f8fafc";
-//       }
-
-//       row.innerHTML = `
-//         <td>${month}</td>
-//         <td class="${a1Class}">${a1Text}${a1Name}</td>
-//         <td class="${a2Class}">${a2Text}${a2Name}</td>
-//         <td></td>
-//       `;
-//       tbody.appendChild(row);
-//     });
-
-//     // Update header balance using only active months' lapsed
-//     const initialBalance = 60000;
-//     const currentBalance = initialBalance - totalLapsed;
-//     const balanceEl = document.getElementById("balance-amount");
-//     if (balanceEl) {
-//       balanceEl.textContent = currentBalance.toLocaleString() + " DC";
-
-//       // Optional: low balance warning
-//       if (currentBalance < 10000) {
-//         balanceEl.style.color = "#ef4444";
-//         balanceEl.style.background = "rgba(239,68,68,0.1)";
-//       } else {
-//         balanceEl.style.color = "";
-//         balanceEl.style.background = "";
-//       }
-//     }
-
-//   } catch (err) {
-//     console.error("populateTable error:", err);
-//     tbody.innerHTML = '<tr><td colspan="4" class="text-center text-danger">Error loading audit data</td></tr>';
-//   }
-// }
-
-
-// async function populateTable() {
-//   const tbody = document.getElementById("audit-table");
-//   if (!tbody) {
-//     console.error("audit-table tbody not found");
-//     return;
-//   }
-
-//   tbody.innerHTML = ""; // Clear table
-
-//   const company = localStorage.getItem("company");
-//   if (!company) {
-//     console.warn("No company in localStorage");
-//     tbody.innerHTML = '<tr><td colspan="4" class="text-center text-danger">Please log in</td></tr>';
-//     return;
-//   }
-
-//   try {
-//     // Find client
-//     const clientsRef = collection(db, "clients");
-//     const clientQ = query(clientsRef, where("company", "==", company));
-//     const clientSnap = await getDocs(clientQ);
-
-//     if (clientSnap.empty) {
-//       console.warn("Client not found:", company);
-//       tbody.innerHTML = '<tr><td colspan="4" class="text-center text-danger">Client not found</td></tr>';
-//       return;
-//     }
-
-//     const clientDoc = clientSnap.docs[0];
-//     const clientId = clientDoc.id;
-
-//     // Get audits
-//     const auditsRef = collection(db, `clients/${clientId}/audits`);
-//     const auditsSnap = await getDocs(auditsRef);
-
-//     const auditMap = {};
-//     auditsSnap.forEach((doc) => {
-//       const data = doc.data();
-//       const key = `${data.year}-${data.month}`;
-//       auditMap[key] = data;
-//     });
-
-//     // Show all 12 months, active months affect balance
-//     const displayYear = 2026;
-//     const months = [
-//       "January", "February", "March", "April", "May", "June",
-//       "July", "August", "September", "October", "November", "December"
-//     ];
-//     const activeMonths = ["February", "March", "April"]; // only these deduct 6000 each
-
-//     let totalDeduction = 0;
-
-//     months.forEach((month) => {
-//       const key = `${displayYear}-${month}`;
-//       const audit = auditMap[key] || {
-//         audit1Status: "pending",
-//         audit1ClientName: "",
-//         audit2Status: "pending",
-//         audit2ClientName: "",
-//       };
-
-//       // === FIXED 6000 deduction per active month ===
-//       let monthDeduction = 0;
-//       if (activeMonths.includes(month)) {
-//         monthDeduction = 6000;
-//         totalDeduction += monthDeduction;
-//       }
-
-//       // Colors & names
-//       let a1Class = "red-text", a1Name = "";
-//       let a2Class = "red-text", a2Name = "";
-
-//       if (audit.audit1Status === "project_conversion") {
-//         a1Class = "green-text";
-//         a1Name = audit.audit1ClientName ? ` (${audit.audit1ClientName})` : "";
-//       } else if (audit.audit1Status === "initiated") {
-//         a1Class = "yellow-text";
-//       }
-
-//       if (audit.audit2Status === "project_conversion") {
-//         a2Class = "green-text";
-//         a2Name = audit.audit2ClientName ? ` (${audit.audit2ClientName})` : "";
-//       } else if (audit.audit2Status === "initiated") {
-//         a2Class = "yellow-text";
-//       }
-
-//       // STATUS: Lapsed if any pending, else Not Lapsed
-//       const hasPending = audit.audit1Status === "pending" || audit.audit2Status === "pending";
-//       const statusText = hasPending ? "Lapsed" : "Not Lapsed";
-//       const statusClass = hasPending ? "text-danger fw-bold" : "text-success fw-bold";
-
-//       const row = document.createElement("tr");
-
-//       // Gray out disabled months (Jan + May–Dec)
-//       if (!activeMonths.includes(month)) {
-//         row.classList.add("disabled-month");
-//       }
-
-//       row.innerHTML = `
-//         <td>${month}</td>
-//         <td class="${a1Class}">3000 DC${a1Name}</td>
-//         <td class="${a2Class}">3000 DC${a2Name}</td>
-//         <td class="${statusClass}">${statusText}</td>
-//       `;
-//       tbody.appendChild(row);
-//     });
-
-//     // 5. Update header balance (fixed 6000 per active month)
-//     const initialBalance = 60000;
-//     const currentBalance = initialBalance - totalDeduction;
-//     const balanceEl = document.getElementById("balance-amount");
-//     if (balanceEl) {
-//       balanceEl.textContent = currentBalance.toLocaleString() + " DC";
-//     }
-
-//   } catch (err) {
-//     console.error("populateTable error:", err);
-//     tbody.innerHTML = '<tr><td colspan="4" class="text-center text-danger">Error loading audit data</td></tr>';
-//   }
-// }
-
-// async function populateTable() {
-//   const tbody = document.getElementById("audit-table");
-//   if (!tbody) {
-//     console.error("audit-table tbody not found");
-//     return;
-//   }
-
-//   tbody.innerHTML = ""; // Clear table
-
-//   const company = localStorage.getItem("company");
-//   if (!company) {
-//     console.warn("No company in localStorage");
-//     tbody.innerHTML = '<tr><td colspan="4" class="text-center text-danger">Please log in</td></tr>';
-//     return;
-//   }
-
-//   try {
-//     // 1. Find client
-//     const clientsRef = collection(db, "clients");
-//     const clientQ = query(clientsRef, where("company", "==", company));
-//     const clientSnap = await getDocs(clientQ);
-
-//     if (clientSnap.empty) {
-//       console.warn("Client not found:", company);
-//       tbody.innerHTML = '<tr><td colspan="4" class="text-center text-danger">Client not found</td></tr>';
-//       return;
-//     }
-
-//     const clientDoc = clientSnap.docs[0];
-//     const clientId = clientDoc.id;
-
-//     // 2. Get audits
-//     const auditsRef = collection(db, `clients/${clientId}/audits`);
-//     const auditsSnap = await getDocs(auditsRef);
-
-//     const auditMap = {};
-//     auditsSnap.forEach((doc) => {
-//       const data = doc.data();
-//       const key = `${data.year}-${data.month}`;
-//       auditMap[key] = data;
-//     });
-
-//     // 3. Determine current month/year for auto-activation
-//     const now = new Date();
-//     const currentYear = now.getFullYear();
-//     const currentMonthName = now.toLocaleString('default', { month: 'long' });
-
-//     // Display year (your test data uses 2026)
-//     const displayYear = 2026;
-
-//     const months = [
-//       "January", "February", "March", "April", "May", "June",
-//       "July", "August", "September", "October", "November", "December"
-//     ];
-
-//     // Active months for balance deduction (you can expand later)
-//     const activeMonths = ["February", "March"];
-
-//     let totalDeduction = 0;
-
-//     months.forEach((month, index) => {
-//       const key = `${displayYear}-${month}`;
-//       const audit = auditMap[key] || {
-//         audit1Status: "pending",
-//         audit1ClientName: "",
-//         audit2Status: "pending",
-//         audit2ClientName: "",
-//       };
-
-//       // Determine if this is the CURRENT month (auto-activate)
-//       const isCurrentMonth = (displayYear === currentYear) && (month === currentMonthName);
-
-//       // Colors & names — only show real status for current month
-//       let a1Class = "red-text", a1Name = "";
-//       let a2Class = "red-text", a2Name = "";
-
-//       if (isCurrentMonth) {
-//         // Show real colors only for current month
-//         if (audit.audit1Status === "project_conversion" || audit.audit1Status === "completed_atp") {
-//           a1Class = "green-text";
-//           a1Name = audit.audit1ClientName ? ` (${audit.audit1ClientName})` : "";
-//         } else if (audit.audit1Status === "initiated") {
-//           a1Class = "yellow-text";
-//         }
-
-//         if (audit.audit2Status === "project_conversion" || audit.audit2Status === "completed_atp") {
-//           a2Class = "green-text";
-//           a2Name = audit.audit2ClientName ? ` (${audit.audit2ClientName})` : "";
-//         } else if (audit.audit2Status === "initiated") {
-//           a2Class = "yellow-text";
-//         }
-//       }
-
-//       // === FIXED 6000 deduction per active month ===
-//       let monthDeduction = 0;
-//       if (activeMonths.includes(month)) {
-//         monthDeduction = 6000;
-//         totalDeduction += monthDeduction;
-//       }
-
-//       // === STATUS column: completely empty for all months ===
-//       // (as per your latest request – no "Lapsed" or "Active" visible)
-//       const statusText = "";
-//       const statusClass = "";
-
-//       const row = document.createElement("tr");
-
-//       // Gray out all months EXCEPT the current month
-//       if (!isCurrentMonth) {
-//         row.classList.add("disabled-month");
-//       }
-
-//       row.innerHTML = `
-//         <td>${month}</td>
-//         <td class="${a1Class}">3000 DC${a1Name}</td>
-//         <td class="${a2Class}">3000 DC${a2Name}</td>
-//         <td class="${statusClass}">${statusText}</td>
-//       `;
-//       tbody.appendChild(row);
-//     });
-
-//     // 5. Update header balance (fixed 6000 per active month)
-//     const initialBalance = 60000;
-//     const currentBalance = initialBalance - totalDeduction;
-//     const balanceEl = document.getElementById("balance-amount");
-//     if (balanceEl) {
-//       balanceEl.textContent = currentBalance.toLocaleString() + " DC";
-//     }
-
-//   } catch (err) {
-//     console.error("populateTable error:", err);
-//     tbody.innerHTML = '<tr><td colspan="4" class="text-center text-danger">Error loading audit data</td></tr>';
-//   }
-// }
-
-// async function populateTable() {
-//   const tbody = document.getElementById("audit-table");
-//   if (!tbody) {
-//     console.error("audit-table tbody not found");
-//     return;
-//   }
-
-//   tbody.innerHTML = ""; // Clear table
-
-//   const company = localStorage.getItem("company");
-//   if (!company) {
-//     console.warn("No company in localStorage");
-//     tbody.innerHTML = '<tr><td colspan="4" class="text-center text-danger">Please log in</td></tr>';
-//     return;
-//   }
-
-//   try {
-//     // 1. Find client
-//     const clientsRef = collection(db, "clients");
-//     const clientQ = query(clientsRef, where("company", "==", company));
-//     const clientSnap = await getDocs(clientQ);
-
-//     if (clientSnap.empty) {
-//       console.warn("Client not found:", company);
-//       tbody.innerHTML = '<tr><td colspan="4" class="text-center text-danger">Client not found</td></tr>';
-//       return;
-//     }
-
-//     const clientDoc = clientSnap.docs[0];
-//     const clientId = clientDoc.id;
-
-//     // 2. Get audits
-//     const auditsRef = collection(db, `clients/${clientId}/audits`);
-//     const auditsSnap = await getDocs(auditsRef);
-
-//     const auditMap = {};
-//     auditsSnap.forEach((doc) => {
-//       const data = doc.data();
-//       const key = `${data.year}-${data.month}`;
-//       auditMap[key] = data;
-//     });
-
-//     // 3. Current date for determining past/current/future
-//     const now = new Date();
-//     const currentYear = now.getFullYear();
-//     const currentMonthIndex = now.getMonth(); // 0 = January, 1 = February, ..., 11 = December
-
-//     const displayYear = 2026; // your test year
-//     const months = [
-//       "January", "February", "March", "April", "May", "June",
-//       "July", "August", "September", "October", "November", "December"
-//     ];
-
-//     const activeMonthsForDeduction = ["February", "March"]; // only these deduct 6000
-
-//     let totalDeduction = 0;
-
-//     months.forEach((month, index) => {
-//       const key = `${displayYear}-${month}`;
-//       const audit = auditMap[key] || {
-//         audit1Status: "pending",
-//         audit1ClientName: "",
-//         audit2Status: "pending",
-//         audit2ClientName: "",
-//       };
-
-//       // Determine state of this month
-//       const isCurrentMonth = (displayYear === currentYear) && (index === currentMonthIndex);
-//       const isPastMonth    = (displayYear < currentYear) || (displayYear === currentYear && index < currentMonthIndex);
-
-//       // Colors & names — only show real status for CURRENT month
-//       let a1Class = "red-text", a1Name = "";
-//       let a2Class = "red-text", a2Name = "";
-
-//       if (isCurrentMonth) {
-//         if (audit.audit1Status === "project_conversion" || audit.audit1Status === "completed_atp") {
-//           a1Class = "green-text";
-//           a1Name = audit.audit1ClientName ? ` (${audit.audit1ClientName})` : "";
-//         } else if (audit.audit1Status === "initiated") {
-//           a1Class = "yellow-text";
-//         }
-
-//         if (audit.audit2Status === "project_conversion" || audit.audit2Status === "completed_atp") {
-//           a2Class = "green-text";
-//           a2Name = audit.audit2ClientName ? ` (${audit.audit2ClientName})` : "";
-//         } else if (audit.audit2Status === "initiated") {
-//           a2Class = "yellow-text";
-//         }
-//       }
-
-//       // === FIXED 6000 deduction per active month ===
-//       let monthDeduction = 0;
-//       if (activeMonthsForDeduction.includes(month)) {
-//         monthDeduction = 6000;
-//         totalDeduction += monthDeduction;
-//       }
-
-//       // === STATUS logic ===
-//       let statusText = "";
-//       let statusClass = "";
-
-//       if (isPastMonth) {
-//         // Past months keep status
-//         const hasPending = audit.audit1Status === "pending" || audit.audit2Status === "pending";
-//         statusText = hasPending ? "Lapsed" : "Not Lapsed";
-//         statusClass = hasPending ? "text-danger fw-bold" : "text-success fw-bold";
-//       } else {
-//         // Current & future months: completely empty
-//         statusText = "";
-//         statusClass = "";
-//       }
-
-//       const row = document.createElement("tr");
-
-//       // Gray out all months EXCEPT the current month
-//       if (!isCurrentMonth) {
-//         row.classList.add("disabled-month");
-//       }
-
-//       row.innerHTML = `
-//         <td>${month}</td>
-//         <td class="${a1Class}">3000 DC${a1Name}</td>
-//         <td class="${a2Class}">3000 DC${a2Name}</td>
-//         <td class="${statusClass}">${statusText}</td>
-//       `;
-//       tbody.appendChild(row);
-//     });
-
-//     // 5. Update header balance (fixed 6000 per active month)
-//     const initialBalance = 60000;
-//     const currentBalance = initialBalance - totalDeduction;
-//     const balanceEl = document.getElementById("balance-amount");
-//     if (balanceEl) {
-//       balanceEl.textContent = currentBalance.toLocaleString() + " DC";
-//     }
-
-//   } catch (err) {
-//     console.error("populateTable error:", err);
-//     tbody.innerHTML = '<tr><td colspan="4" class="text-center text-danger">Error loading audit data</td></tr>';
-//   }
-// }
-
+// ─────────────────────────────────────────────────────────────────
+//  Firebase Setup
+// ─────────────────────────────────────────────────────────────────
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-app.js";
+import { getFirestore, collection, query, where, getDocs } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyDKaa99EeFbXPP4YxPZMPqTuqjMQyFsMio",
+  authDomain: "partner-dashboard-83433.firebaseapp.com",
+  projectId: "partner-dashboard-83433",
+  storageBucket: "partner-dashboard-83433.firebasestorage.app",
+  messagingSenderId: "998003403808",
+  appId: "1:998003403808:web:c59c6b584b0a3a9568a045",
+  measurementId: "G-5Z0BPGB8JD"
+};
+
+const app = initializeApp(firebaseConfig);
+const db  = getFirestore(app);
+window.db = db;
+
+console.log("Firebase & Firestore initialized successfully!");
+
+
+// ─────────────────────────────────────────────────────────────────
+//  HELPER: Convert Firestore Timestamp or plain value → JS Date
+// ─────────────────────────────────────────────────────────────────
+function toDate(value) {
+  if (!value) return null;
+  if (typeof value.toDate === "function") return value.toDate();
+  return new Date(value);
+}
+
+
+// ─────────────────────────────────────────────────────────────────
+//  HELPER: Add N calendar months to a date (same day-of-month)
+//  e.g. addMonths(March 11, 1) → April 11
+// ─────────────────────────────────────────────────────────────────
+function addMonths(date, n) {
+  const d = new Date(date);
+  d.setMonth(d.getMonth() + n);
+  return d;
+}
+
+
+// ─────────────────────────────────────────────────────────────────
+//  MAIN: Populate the audit table
+// ─────────────────────────────────────────────────────────────────
 async function populateTable() {
   const tbody = document.getElementById("audit-table");
-  if (!tbody) {
-    console.error("audit-table tbody not found");
-    return;
-  }
+  if (!tbody) { console.error("audit-table tbody not found"); return; }
 
-  tbody.innerHTML = ""; // Clear table
+  tbody.innerHTML = "";
 
   const company = localStorage.getItem("company");
   if (!company) {
-    console.warn("No company in localStorage");
     tbody.innerHTML = '<tr><td colspan="4" class="text-center text-danger">Please log in</td></tr>';
     return;
   }
 
   try {
-    // 1. Find client
+    // ── 1. Fetch client document ──────────────────────────────────
     const clientsRef = collection(db, "clients");
-    const clientQ = query(clientsRef, where("company", "==", company));
+    const clientQ    = query(clientsRef, where("company", "==", company));
     const clientSnap = await getDocs(clientQ);
 
     if (clientSnap.empty) {
-      console.warn("Client not found:", company);
       tbody.innerHTML = '<tr><td colspan="4" class="text-center text-danger">Client not found</td></tr>';
       return;
     }
 
-    const clientDoc = clientSnap.docs[0];
-    const clientId = clientDoc.id;
+    const clientData = clientSnap.docs[0].data();
+    const clientId   = clientSnap.docs[0].id;
 
-    // 2. Get audits
-    const auditsRef = collection(db, `clients/${clientId}/audits`);
+    // ── 2. Determine account start date ──────────────────────────
+    //   • All existing/old users → forced to March 1, 2026
+    //   • New users (createdAt >= March 1, 2026) → use their actual createdAt
+    const PROGRAM_START = new Date(2026, 2, 1);   // March 1, 2026 (month is 0-based)
+
+    let rawCreatedAt = toDate(clientData.createdAt);
+    if (!rawCreatedAt || rawCreatedAt < PROGRAM_START) {
+      rawCreatedAt = PROGRAM_START;
+    }
+
+    // accountStart: the exact day the user's period begins
+    const accountStart = rawCreatedAt;
+
+    // ── 3. Fetch audit documents ──────────────────────────────────
+    const auditsRef  = collection(db, `clients/${clientId}/audits`);
     const auditsSnap = await getDocs(auditsRef);
 
+    // Build lookup: "2026-March" → audit data
     const auditMap = {};
     auditsSnap.forEach((doc) => {
-      const data = doc.data();
-      const key = `${data.year}-${data.month}`;
-      auditMap[key] = data;
+      const d   = doc.data();
+      const key = `${d.year}-${d.month}`;
+      auditMap[key] = d;
     });
 
-    // 3. Current date
+    // ── 4. Current moment ─────────────────────────────────────────
     const now = new Date();
-    const currentYear = now.getFullYear();
-    const currentMonthName = now.toLocaleString('default', { month: 'long' });
 
-    const displayYear = 2026; // your test year
+    // ── 5. Build period list ──────────────────────────────────────
+    //   Period 1: accountStart  → accountStart + 1 month  (exclusive)
+    //   Period 2: period1 end   → period1 end  + 1 month
+    //   … up to 12 periods (the full program year)
+    //
+    //   We then map each period onto the calendar month that contains
+    //   its START date — that's the row shown in the table.
+
+    const TOTAL_PERIODS = 12;   // program lasts 12 monthly periods
+
+    // periods[i] = { periodStart, periodEnd, calYear, calMonthIdx, monthName }
+    const periods = [];
+    for (let i = 0; i < TOTAL_PERIODS; i++) {
+      const periodStart = addMonths(accountStart, i);
+      const periodEnd   = addMonths(accountStart, i + 1);   // exclusive upper bound
+
+      const calYear     = periodStart.getFullYear();
+      const calMonthIdx = periodStart.getMonth();           // 0-based
+      const monthName   = periodStart.toLocaleString("default", { month: "long" });
+
+      periods.push({ periodStart, periodEnd, calYear, calMonthIdx, monthName });
+    }
+
+    // ── 6. Balance tracking (real-time: deduct per completed audit) ─
+    let totalUtilized = 0;
+
+    // ── 7. Render rows ────────────────────────────────────────────
     const months = [
-      "January", "February", "March", "April", "May", "June",
-      "July", "August", "September", "October", "November", "December"
+      "January","February","March","April","May","June",
+      "July","August","September","October","November","December"
     ];
 
-    let totalUtilized = 0;
-    let totalLapsed = 0;
-
-    months.forEach((month, index) => {
-      const key = `${displayYear}-${month}`;
-      const audit = auditMap[key] || {
-        audit1Status: "pending",
-        audit1ClientName: "",
-        audit2Status: "pending",
-        audit2ClientName: "",
-      };
-
-      // Month state
-      const isPastMonth    = (displayYear < currentYear) ||
-                             (displayYear === currentYear && index < months.indexOf(currentMonthName));
-      const isCurrentMonth = (displayYear === currentYear) && (month === currentMonthName);
-      const isFutureMonth  = (displayYear > currentYear) ||
-                             (displayYear === currentYear && index > months.indexOf(currentMonthName));
-
-      // Special rule: January is always disabled (program started in Feb)
-      const isJanuaryDisabled = month === "January";
-
-      // Active if past or current, but exclude January
-      const isActiveMonth = (isPastMonth || isCurrentMonth) && !isJanuaryDisabled;
-
-      // === COLORS (red = pending, yellow = audit_completed, green = project-conversion) ===
-      let a1Class = "red-text", a1Name = "";
-      let a2Class = "red-text", a2Name = "";
-
-      if (isActiveMonth) {
-        // Audit1
-        if (audit.audit1Status === "project-conversion") {
-          a1Class = "green-text";
-          a1Name = audit.audit1ClientName ? ` (${audit.audit1ClientName})` : "";
-        } else if (audit.audit1Status === "audit_completed") {
-          a1Class = "yellow-text";
-        } else {
-          a1Class = "red-text";
-        }
-
-        // Audit2
-        if (audit.audit2Status === "project-conversion") {
-          a2Class = "green-text";
-          a2Name = audit.audit2ClientName ? ` (${audit.audit2ClientName})` : "";
-        } else if (audit.audit2Status === "audit_completed") {
-          a2Class = "yellow-text";
-        } else {
-          a2Class = "red-text";
-        }
-      }
-
-      // === UTILIZED during month (3,000 per completed audit) ===
-      let monthUtilized = 0;
-      if (isActiveMonth) {
-        if (audit.audit1Status === "audit_completed" || audit.audit1Status === "project-conversion") {
-          monthUtilized += 3000;
-        }
-        if (audit.audit2Status === "audit_completed" || audit.audit2Status === "project-conversion") {
-          monthUtilized += 3000;
-        }
-        totalUtilized += monthUtilized;
-      }
-
-      // === LAPSED only at month-end (for past months, excluding January) ===
-      let monthLapsed = 0;
-      if (isPastMonth && !isJanuaryDisabled) {
-        const completedAudits = 
-          (audit.audit1Status === "audit_completed" || audit.audit1Status === "project-conversion" ? 1 : 0) +
-          (audit.audit2Status === "audit_completed" || audit.audit2Status === "project-conversion" ? 1 : 0);
-
-        monthLapsed = (2 - completedAudits) * 3000; // 3000 per missing audit
-        totalLapsed += monthLapsed;
-      }
-
-      // === STATUS logic ===
-      let statusText = "";
-      let statusClass = "";
-
-      if (isPastMonth && !isJanuaryDisabled) {
-        const hasPending = audit.audit1Status === "pending" || audit.audit2Status === "pending";
-        statusText = hasPending ? "Lapsed" : "Not Lapsed";
-        statusClass = hasPending ? "text-danger fw-bold" : "text-success fw-bold";
-      } else {
-        statusText = "";
-        statusClass = "";
-      }
-
+    months.forEach((month, monthIdx) => {
       const row = document.createElement("tr");
 
-      // Gray out future months + January
-      if (isFutureMonth || isJanuaryDisabled) {
+      // Jan & Feb are ALWAYS disabled (program didn't exist then)
+      if (month === "January" || month === "February") {
         row.classList.add("disabled-month");
+        row.innerHTML = `
+          <td>${month}</td>
+          <td>3000 DC</td>
+          <td>3000 DC</td>
+          <td></td>
+        `;
+        tbody.appendChild(row);
+        return;
+      }
+
+      // Find the period whose start falls in this calendar month (2026)
+      const period = periods.find(
+        p => p.calYear === 2026 && p.calMonthIdx === monthIdx
+      );
+
+      // If no period maps here, this month is beyond the program scope → disabled
+      if (!period) {
+        row.classList.add("disabled-month");
+        row.innerHTML = `<td>${month}</td><td>3000 DC</td><td>3000 DC</td><td></td>`;
+        tbody.appendChild(row);
+        return;
+      }
+
+      const { periodStart, periodEnd } = period;
+
+      // Has this period started yet?  (today >= periodStart)
+      const periodStarted = now >= periodStart;
+
+      // Has this period ended yet?    (today >= periodEnd)
+      const periodEnded   = now >= periodEnd;
+
+      // Future period — not yet started → disabled grey row
+      if (!periodStarted) {
+        row.classList.add("disabled-month");
+        row.innerHTML = `<td>${month}</td><td>3000 DC</td><td>3000 DC</td><td></td>`;
+        tbody.appendChild(row);
+        return;
+      }
+
+      // ── Active or completed period ────────────────────────────
+      const key   = `2026-${month}`;
+      const audit = auditMap[key] || {
+        audit1Status: "pending", audit1ClientName: "",
+        audit2Status: "pending", audit2ClientName: "",
+      };
+
+      // Audit completion flags
+      const a1Done = audit.audit1Status === "audit_completed" || audit.audit1Status === "project-conversion";
+      const a2Done = audit.audit2Status === "audit_completed" || audit.audit2Status === "project-conversion";
+
+      // ── Audit-1 colour ────────────────────────────────────────
+      let a1Class = "red-text";
+      let a1Name  = "";
+      if (a1Done) {
+        if (audit.audit1Status === "project-conversion") {
+          a1Class = "green-text";
+          a1Name  = audit.audit1ClientName ? ` (${audit.audit1ClientName})` : "";
+        } else {
+          a1Class = "yellow-text";
+        }
+      }
+
+      // ── Audit-2 colour ────────────────────────────────────────
+      let a2Class = "red-text";
+      let a2Name  = "";
+      if (a2Done) {
+        if (audit.audit2Status === "project-conversion") {
+          a2Class = "green-text";
+          a2Name  = audit.audit2ClientName ? ` (${audit.audit2ClientName})` : "";
+        } else {
+          a2Class = "yellow-text";
+        }
+      }
+
+      // ── Balance: deduct immediately for each completed audit ──
+      if (a1Done) totalUtilized += 3000;
+      if (a2Done) totalUtilized += 3000;
+
+      // ── Status column ─────────────────────────────────────────
+      //   Only shown AFTER the period has ended (month-end reached)
+      //   Text rules:
+      //     2 audits done  → "6000 DC Used · Not Lapsed"   (green)
+      //     1 audit done   → "3000 DC Used · 3000 DC Lapsed" (yellow/orange)
+      //     0 audits done  → "6000 DC Lapsed"               (red)
+      let statusText  = "";
+      let statusClass = "";
+
+      if (periodEnded) {
+        const completedCount = (a1Done ? 1 : 0) + (a2Done ? 1 : 0);
+
+        if (completedCount === 2) {
+          statusText  = "6000 DC Used · Not Lapsed";
+          statusClass = "text-success fw-bold";
+        } else if (completedCount === 1) {
+          statusText  = "3000 DC Used · 3000 DC Lapsed";
+          statusClass = "text-warning fw-bold";
+        } else {
+          statusText  = "6000 DC Lapsed";
+          statusClass = "text-danger fw-bold";
+        }
       }
 
       row.innerHTML = `
@@ -762,214 +250,127 @@ async function populateTable() {
       tbody.appendChild(row);
     });
 
-    // 6. Final balance = initial - (utilized + lapsed)
-    const initialBalance = 60000;
-    const currentBalance = initialBalance - totalUtilized - totalLapsed;
+    // ── 8. Update wallet balance ──────────────────────────────────
+    //   Balance = 60,000 − (every completed audit × 3,000)
+    //   Lapsed DCs are shown in Status column but do NOT reduce the wallet —
+    //   the wallet only reflects DCs that have been redeemed/utilized.
     const balanceEl = document.getElementById("balance-amount");
     if (balanceEl) {
+      const currentBalance = 60000 - totalUtilized;
       balanceEl.textContent = currentBalance.toLocaleString() + " DC";
     }
 
   } catch (err) {
     console.error("populateTable error:", err);
-    tbody.innerHTML = '<tr><td colspan="4" class="text-center text-danger">Error loading audit data</td></tr>';
+    tbody.innerHTML = '<tr><td colspan="4" class="text-center text-danger">Error loading data</td></tr>';
   }
 }
 
 
-// Updated login function to use Firestore instead of Google Sheets
-
-// async function handleLogin() {
-//   const email = document.getElementById("email").value.trim().toLowerCase();
-//   const password = document.getElementById("password").value;
-//   const messageEl = document.getElementById("login-message");
-
-//   // Your existing debug logs
-//   console.log("Sending:", { email, password });
-
-//   messageEl.style.display = "none";
-//   messageEl.textContent = "";
-
-//   if (!email || !password) {
-//     messageEl.textContent = "Please enter Email ID and Password.";
-//     messageEl.style.display = "block";
-//     return;
-//   }
-
-//   try {
-//     // Firestore query for client
-//     const clientsRef = collection(db, "clients");
-//     const q = query(clientsRef, where("E-MAIL", "==", email));
-//     const querySnapshot = await getDocs(q);
-
-//     let found = false;
-//     let company = "Unknown";
-
-//     querySnapshot.forEach((doc) => {
-//       const data = doc.data();
-//       if (data.PASSWORD === password) {  // plain text comparison
-//         found = true;
-//         company = data.COMPANY || "Unknown";
-//       }
-//     });
-
-//     console.log("Login attempt →", { email, password, found, company });
-
-//     if (found) {
-//       localStorage.setItem("company", company);
-//       localStorage.setItem("userName", "User"); // or fetch real name if available
-
-//       document.getElementById("login-section").classList.add("d-none");
-//       document.getElementById("dashboard-section").classList.remove("d-none");
-
-//       document.getElementById("company-name").textContent = company;
-
-//       populateTable();  // now uses Firestore (see next step)
-
-//       // Uncomment if you still want T&C modal
-//       // setTimeout(() => {
-//       //   $('#termsModal').modal('show');
-//       // }, 1000);
-//     } else {
-//       messageEl.textContent = "Invalid Email ID or Password. Please try again.";
-//       messageEl.style.display = "block";
-//     }
-//   } catch (err) {
-//     console.error("Login error:", err);
-//     messageEl.textContent = "Connection error. Check internet or Firebase config.";
-//     messageEl.style.display = "block";
-//   }
-// }
-
+// ─────────────────────────────────────────────────────────────────
+//  LOGIN
+// ─────────────────────────────────────────────────────────────────
 async function handleLogin() {
-  const emailInput = document.getElementById("email").value.trim().toLowerCase();
+  const emailInput    = document.getElementById("email").value.trim().toLowerCase();
   const passwordInput = document.getElementById("password").value;
-  const messageEl = document.getElementById("login-message");
-
-  console.log("Sending:", { email: emailInput, password: passwordInput });
+  const messageEl     = document.getElementById("login-message");
 
   messageEl.style.display = "none";
-  messageEl.textContent = "";
+  messageEl.textContent   = "";
 
   if (!emailInput || !passwordInput) {
-    messageEl.textContent = "Please enter Email ID and Password.";
+    messageEl.textContent   = "Please enter Email ID and Password.";
     messageEl.style.display = "block";
     return;
   }
 
   try {
-  const clientsRef = collection(db, "clients");
-  const q = query(clientsRef, where("email", "==", emailInput));
-  const querySnapshot = await getDocs(q);
+    const clientsRef    = collection(db, "clients");
+    const q             = query(clientsRef, where("email", "==", emailInput));
+    const querySnapshot = await getDocs(q);
 
-  let found = false;
-  let company = "Unknown";
+    let found   = false;
+    let company = "Unknown";
 
-  querySnapshot.forEach((doc) => {
-    const data = doc.data();
-    console.log("Found matching document:", data);  // This will print the real data if found
+    querySnapshot.forEach((doc) => {
+      const data = doc.data();
+      if (data.password === passwordInput) {
+        found   = true;
+        company = data.company || "Unknown";
+      }
+    });
 
-    // console.log("Stored password from Firestore:", data.password);
-    // console.log("Typed password from input:", passwordInput);
-    // console.log("Lengths:", data.password.length, passwordInput.length);
-    // console.log("Exact match?", data.password === passwordInput);
-    // console.log("Trimmed match?", data.password.trim() === passwordInput.trim());
-
-    // Safe password comparison (handles undefined/missing field)
-      const storedPass = (data.password || "").trim();
-      const inputPass = passwordInput.trim();
-
-      // console.log("Stored password:", storedPass);
-      // console.log("Typed password:", inputPass);
-      // console.log("Match?", storedPass === inputPass);
-
-      // if (storedPass === inputPass) {
-      //   found = true;
-      //   company = (data.company || "Unknown").trim();
-      //   console.log("Password matched! Company:", company);
-      // }
-
-    if (data.password === passwordInput) {  // lowercase "password"
-      found = true;
-      company = data.company || "Unknown";  // lowercase "company"
-      console.log("Password matched! Company:", company);
+    if (found) {
+      localStorage.setItem("company", company);
+      document.getElementById("login-section").classList.add("d-none");
+      document.getElementById("dashboard-section").classList.remove("d-none");
+      document.getElementById("company-name").textContent = company;
+      populateTable();
+    } else {
+      messageEl.textContent   = "Invalid Email ID or Password. Please try again.";
+      messageEl.style.display = "block";
     }
-  });
 
-  console.log("Login attempt result:", { email: emailInput, found, company });
-
-  if (found) {
-    localStorage.setItem("company", company);
-    document.getElementById("login-section").classList.add("d-none");
-    document.getElementById("dashboard-section").classList.remove("d-none");
-    document.getElementById("company-name").textContent = company;
-
-    populateTable();
-    // setTimeout(() => $('#termsModal').modal('show'), 1000);
-  } else {
-    messageEl.textContent = "Invalid Email ID or Password. Please try again.";
+  } catch (err) {
+    console.error("Login error:", err);
+    messageEl.textContent   = "Connection error. Check console.";
     messageEl.style.display = "block";
   }
-} catch (err) {
-  console.error("Login error:", err);
-  messageEl.textContent = "Connection error. Check console.";
-  messageEl.style.display = "block";
-}
 }
 
-// Logout function
 
+// ─────────────────────────────────────────────────────────────────
+//  LOGOUT
+// ─────────────────────────────────────────────────────────────────
 function handleLogout() {
   localStorage.clear();
   location.reload();
 }
 
-// Auto-login check (page refresh)
+
+// ─────────────────────────────────────────────────────────────────
+//  PASSWORD VISIBILITY TOGGLE
+// ─────────────────────────────────────────────────────────────────
+function togglePassword() {
+  const passwordInput = document.getElementById("password");
+  const toggleIcon    = document.querySelector(".toggle-password");
+
+  if (passwordInput.type === "password") {
+    passwordInput.type = "text";
+    toggleIcon.classList.remove("fa-eye");
+    toggleIcon.classList.add("fa-eye-slash");
+  } else {
+    passwordInput.type = "password";
+    toggleIcon.classList.remove("fa-eye-slash");
+    toggleIcon.classList.add("fa-eye");
+  }
+}
+
+
+// ─────────────────────────────────────────────────────────────────
+//  AUTO-LOGIN on page refresh
+// ─────────────────────────────────────────────────────────────────
 if (localStorage.getItem("company")) {
   document.getElementById("login-section").classList.add("d-none");
   document.getElementById("dashboard-section").classList.remove("d-none");
   document.getElementById("company-name").textContent = localStorage.getItem("company");
   populateTable();
-
-//   setTimeout(() => $('#termsModal').modal('show'), 1000);
 }
 
-function togglePassword() {
-    const passwordInput = document.getElementById('password');
-    const toggleIcon = document.querySelector('.toggle-password');
-    
-    if (passwordInput.type === 'password') {
-        passwordInput.type = 'text';
-        toggleIcon.classList.remove('fa-eye');
-        toggleIcon.classList.add('fa-eye-slash');
-    } else {
-        passwordInput.type = 'password';
-        toggleIcon.classList.remove('fa-eye-slash');
-        toggleIcon.classList.add('fa-eye');
-    }
-}
 
-// Attach click handler safely
+// ─────────────────────────────────────────────────────────────────
+//  EVENT LISTENERS
+// ─────────────────────────────────────────────────────────────────
 document.addEventListener("DOMContentLoaded", () => {
   const loginBtn = document.getElementById("loginBtn");
-  if (loginBtn) {
-    loginBtn.addEventListener("click", handleLogin);
-  }
+  if (loginBtn) loginBtn.addEventListener("click", handleLogin);
 
-  // Also fix togglePassword
   const toggleIcon = document.getElementById("togglePassword");
-  if (toggleIcon) {
-    toggleIcon.addEventListener("click", togglePassword);
-  }
-});
+  if (toggleIcon) toggleIcon.addEventListener("click", togglePassword);
 
-// Attach logout handler safely
-document.addEventListener("DOMContentLoaded", () => {
   const logoutBtn = document.getElementById("logoutBtn");
-  if (logoutBtn) {
-    logoutBtn.addEventListener("click", (e) => {
-      e.preventDefault(); // prevent default link behavior
-      handleLogout();
-    });
-  }
+  if (logoutBtn) logoutBtn.addEventListener("click", (e) => {
+    e.preventDefault();
+    handleLogout();
+  });
 });
