@@ -34,7 +34,7 @@ function toDate(value) {
 
 
 // ─────────────────────────────────────────────────────────────────
-//  HELPER: Add N calendar months to a date (same day-of-month)
+//  HELPER: Add N calendar months to a date (preserving day-of-month)
 //  e.g. addMonths(March 11, 1) → April 11
 // ─────────────────────────────────────────────────────────────────
 function addMonths(date, n) {
@@ -74,69 +74,76 @@ async function populateTable() {
     const clientId   = clientSnap.docs[0].id;
 
     // ── 2. Determine account start date ──────────────────────────
-    //   • All existing/old users → forced to March 1, 2026
-    //   • New users (createdAt >= March 1, 2026) → use their actual createdAt
-    const PROGRAM_START = new Date(2026, 2, 1);   // March 1, 2026 (month is 0-based)
+    //   Old users (createdAt before March 1, 2026) → forced to March 1, 2026
+    //   New users (createdAt on/after March 1, 2026) → use their actual createdAt
+    const PROGRAM_START = new Date(2026, 2, 1);  // March 1, 2026
 
     let rawCreatedAt = toDate(clientData.createdAt);
     if (!rawCreatedAt || rawCreatedAt < PROGRAM_START) {
       rawCreatedAt = PROGRAM_START;
     }
-
-    // accountStart: the exact day the user's period begins
     const accountStart = rawCreatedAt;
 
     // ── 3. Fetch audit documents ──────────────────────────────────
     const auditsRef  = collection(db, `clients/${clientId}/audits`);
     const auditsSnap = await getDocs(auditsRef);
 
-    // Build lookup: "2026-March" → audit data
+    // Build lookup map: "2026-March" → audit data
     const auditMap = {};
     auditsSnap.forEach((doc) => {
-      const d   = doc.data();
-      const key = `${d.year}-${d.month}`;
-      auditMap[key] = d;
+      const d = doc.data();
+      auditMap[`${d.year}-${d.month}`] = d;
     });
 
     // ── 4. Current moment ─────────────────────────────────────────
     const now = new Date();
 
-    // ── 5. Build period list ──────────────────────────────────────
-    //   Period 1: accountStart  → accountStart + 1 month  (exclusive)
-    //   Period 2: period1 end   → period1 end  + 1 month
-    //   … up to 12 periods (the full program year)
-    //
-    //   We then map each period onto the calendar month that contains
-    //   its START date — that's the row shown in the table.
-
-    const TOTAL_PERIODS = 12;   // program lasts 12 monthly periods
-
-    // periods[i] = { periodStart, periodEnd, calYear, calMonthIdx, monthName }
+    // ── 5. Build 12 rolling periods from accountStart ─────────────
+    //   Period 1: accountStart       → accountStart + 1 month
+    //   Period 2: accountStart+1mo   → accountStart + 2 months
+    //   ... and so on for 12 periods
+    //   Each period is mapped to the calendar month of its START date.
+    const TOTAL_PERIODS = 12;
     const periods = [];
     for (let i = 0; i < TOTAL_PERIODS; i++) {
       const periodStart = addMonths(accountStart, i);
-      const periodEnd   = addMonths(accountStart, i + 1);   // exclusive upper bound
-
-      const calYear     = periodStart.getFullYear();
-      const calMonthIdx = periodStart.getMonth();           // 0-based
-      const monthName   = periodStart.toLocaleString("default", { month: "long" });
-
-      periods.push({ periodStart, periodEnd, calYear, calMonthIdx, monthName });
+      const periodEnd   = addMonths(accountStart, i + 1);  // exclusive
+      periods.push({
+        periodStart,
+        periodEnd,
+        calYear:     periodStart.getFullYear(),
+        calMonthIdx: periodStart.getMonth(),  // 0-based
+      });
     }
 
-    // ── 6. Balance tracking (real-time: deduct per completed audit) ─
+    // ── 6. Wallet deduction tracking ─────────────────────────────
+    //
+    //   TWO types of deductions both reduce the wallet:
+    //
+    //   A) UTILIZED — deducted IMMEDIATELY when an audit is completed
+    //      (3000 DC per completed audit, real-time)
+    //
+    //   B) LAPSED   — deducted only AFTER the period ends
+    //      For each ended period: (2 - completedCount) × 3000
+    //      e.g. 0 audits done → 6000 lapsed
+    //           1 audit done  → 3000 lapsed
+    //           2 audits done → 0 lapsed
+    //
+    //   walletBalance = 60,000 - totalUtilized - totalLapsed
+    //
     let totalUtilized = 0;
+    let totalLapsed   = 0;
 
-    // ── 7. Render rows ────────────────────────────────────────────
+    // ── 7. Render rows for the calendar year 2026 ─────────────────
     const months = [
-      "January","February","March","April","May","June",
-      "July","August","September","October","November","December"
+      "January", "February", "March", "April", "May", "June",
+      "July", "August", "September", "October", "November", "December"
     ];
 
     months.forEach((month, monthIdx) => {
       const row = document.createElement("tr");
 
-      // Jan & Feb are ALWAYS disabled (program didn't exist then)
+      // January & February: always disabled — program starts from March
       if (month === "January" || month === "February") {
         row.classList.add("disabled-month");
         row.innerHTML = `
@@ -149,12 +156,12 @@ async function populateTable() {
         return;
       }
 
-      // Find the period whose start falls in this calendar month (2026)
+      // Find the period whose start falls in this calendar month of 2026
       const period = periods.find(
         p => p.calYear === 2026 && p.calMonthIdx === monthIdx
       );
 
-      // If no period maps here, this month is beyond the program scope → disabled
+      // No period maps to this month → beyond program scope → disabled
       if (!period) {
         row.classList.add("disabled-month");
         row.innerHTML = `<td>${month}</td><td>3000 DC</td><td>3000 DC</td><td></td>`;
@@ -164,13 +171,8 @@ async function populateTable() {
 
       const { periodStart, periodEnd } = period;
 
-      // Has this period started yet?  (today >= periodStart)
+      // Period hasn't started yet → disabled (future)
       const periodStarted = now >= periodStart;
-
-      // Has this period ended yet?    (today >= periodEnd)
-      const periodEnded   = now >= periodEnd;
-
-      // Future period — not yet started → disabled grey row
       if (!periodStarted) {
         row.classList.add("disabled-month");
         row.innerHTML = `<td>${month}</td><td>3000 DC</td><td>3000 DC</td><td></td>`;
@@ -178,51 +180,55 @@ async function populateTable() {
         return;
       }
 
-      // ── Active or completed period ────────────────────────────
-      const key   = `2026-${month}`;
-      const audit = auditMap[key] || {
+      // Period ended? (today >= periodEnd)
+      const periodEnded = now >= periodEnd;
+
+      // ── Get audit data for this month ─────────────────────────
+      const audit = auditMap[`2026-${month}`] || {
         audit1Status: "pending", audit1ClientName: "",
         audit2Status: "pending", audit2ClientName: "",
       };
 
-      // Audit completion flags
       const a1Done = audit.audit1Status === "audit_completed" || audit.audit1Status === "project-conversion";
       const a2Done = audit.audit2Status === "audit_completed" || audit.audit2Status === "project-conversion";
 
-      // ── Audit-1 colour ────────────────────────────────────────
-      let a1Class = "red-text";
-      let a1Name  = "";
+      // ── Audit-1 colour & label ────────────────────────────────
+      let a1Class = "red-text", a1Name = "";
       if (a1Done) {
-        if (audit.audit1Status === "project-conversion") {
-          a1Class = "green-text";
-          a1Name  = audit.audit1ClientName ? ` (${audit.audit1ClientName})` : "";
-        } else {
-          a1Class = "yellow-text";
-        }
+        a1Class = audit.audit1Status === "project-conversion" ? "green-text" : "yellow-text";
+        a1Name  = audit.audit1Status === "project-conversion" && audit.audit1ClientName
+          ? ` (${audit.audit1ClientName})` : "";
       }
 
-      // ── Audit-2 colour ────────────────────────────────────────
-      let a2Class = "red-text";
-      let a2Name  = "";
+      // ── Audit-2 colour & label ────────────────────────────────
+      let a2Class = "red-text", a2Name = "";
       if (a2Done) {
-        if (audit.audit2Status === "project-conversion") {
-          a2Class = "green-text";
-          a2Name  = audit.audit2ClientName ? ` (${audit.audit2ClientName})` : "";
-        } else {
-          a2Class = "yellow-text";
-        }
+        a2Class = audit.audit2Status === "project-conversion" ? "green-text" : "yellow-text";
+        a2Name  = audit.audit2Status === "project-conversion" && audit.audit2ClientName
+          ? ` (${audit.audit2ClientName})` : "";
       }
 
-      // ── Balance: deduct immediately for each completed audit ──
-      if (a1Done) totalUtilized += 3000;
-      if (a2Done) totalUtilized += 3000;
+      // ── A) UTILIZED: deduct immediately for each completed audit ─
+      //    This reflects in the wallet right away (no waiting for period end)
+      const monthUtilized = (a1Done ? 3000 : 0) + (a2Done ? 3000 : 0);
+      totalUtilized += monthUtilized;
+
+      // ── B) LAPSED: deduct only after period ends ──────────────
+      //    For each incomplete slot at period end: 3000 DC lapsed
+      //    e.g. 0 done → 6000 lapsed | 1 done → 3000 lapsed | 2 done → 0 lapsed
+      let monthLapsed = 0;
+      if (periodEnded) {
+        const completedCount = (a1Done ? 1 : 0) + (a2Done ? 1 : 0);
+        monthLapsed = (2 - completedCount) * 3000;
+        totalLapsed += monthLapsed;
+      }
 
       // ── Status column ─────────────────────────────────────────
-      //   Only shown AFTER the period has ended (month-end reached)
-      //   Text rules:
-      //     2 audits done  → "6000 DC Used · Not Lapsed"   (green)
-      //     1 audit done   → "3000 DC Used · 3000 DC Lapsed" (yellow/orange)
-      //     0 audits done  → "6000 DC Lapsed"               (red)
+      //   Only shown AFTER period ends.
+      //
+      //   2 audits done → "6000 DC Utilized · Not Lapsed"     🟢 green
+      //   1 audit done  → "3000 DC Utilized · 3000 DC Lapsed" 🟡 yellow
+      //   0 audits done → "6000 DC Lapsed"                    🔴 red
       let statusText  = "";
       let statusClass = "";
 
@@ -230,10 +236,10 @@ async function populateTable() {
         const completedCount = (a1Done ? 1 : 0) + (a2Done ? 1 : 0);
 
         if (completedCount === 2) {
-          statusText  = "6000 DC Used · Not Lapsed";
+          statusText  = "6000 DC Utilized · Not Lapsed";
           statusClass = "text-success fw-bold";
         } else if (completedCount === 1) {
-          statusText  = "3000 DC Used · 3000 DC Lapsed";
+          statusText  = "3000 DC Utilized · 3000 DC Lapsed";
           statusClass = "text-warning fw-bold";
         } else {
           statusText  = "6000 DC Lapsed";
@@ -250,13 +256,22 @@ async function populateTable() {
       tbody.appendChild(row);
     });
 
-    // ── 8. Update wallet balance ──────────────────────────────────
-    //   Balance = 60,000 − (every completed audit × 3,000)
-    //   Lapsed DCs are shown in Status column but do NOT reduce the wallet —
-    //   the wallet only reflects DCs that have been redeemed/utilized.
+    // ── 8. Update wallet balance in header ────────────────────────
+    //
+    //   walletBalance = 60,000
+    //                 − totalUtilized  (deducted immediately per completed audit)
+    //                 − totalLapsed    (deducted after each period ends for missed audits)
+    //
+    //   Examples (user created March 1, period ends April 1):
+    //   ┌─────────────────────────────────────────────────────────┐
+    //   │ 0 audits in March, period over → 0 utilized + 6000 lapsed → balance = 54,000 │
+    //   │ 1 audit in March, period over  → 3000 utilized + 3000 lapsed → balance = 54,000 │
+    //   │ 2 audits in March, period over → 6000 utilized + 0 lapsed → balance = 54,000 │
+    //   │ 1 audit in March, period active → 3000 utilized + 0 lapsed → balance = 57,000 │
+    //   └─────────────────────────────────────────────────────────┘
     const balanceEl = document.getElementById("balance-amount");
     if (balanceEl) {
-      const currentBalance = 60000 - totalUtilized;
+      const currentBalance = 60000 - totalUtilized - totalLapsed;
       balanceEl.textContent = currentBalance.toLocaleString() + " DC";
     }
 
